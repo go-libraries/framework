@@ -355,7 +355,6 @@ func structToMap(data any) map[string]any {
 				continue
 			}
 		}
-
 		if fieldValue.Kind() == reflect.Struct && fieldType.Anonymous {
 			subStructMap := structToMap(fieldValue.Interface())
 			for key, value := range subStructMap {
