@@ -1,6 +1,7 @@
 package logger
 
 import (
+	"github.com/goravel/framework/facades"
 	"path/filepath"
 	"strings"
 	"time"
@@ -40,11 +41,12 @@ func (daily *Daily) Handle(channel string) (logrus.Hook, error) {
 	logPath = strings.ReplaceAll(logPath, ext, "")
 	logPath = filepath.Join(support.RelativePath, logPath)
 
+	tz := facades.Config().GetString("app.timezone", carbon.UTC)
 	writer, err := rotatelogs.New(
 		logPath+"-%Y-%m-%d"+ext,
 		rotatelogs.WithRotationTime(time.Duration(24)*time.Hour),
 		rotatelogs.WithRotationCount(uint(daily.config.GetInt(channel+".days"))),
-		rotatelogs.WithClock(rotatelogs.NewClock(carbon.Now().StdTime())),
+		rotatelogs.WithClock(rotatelogs.NewClock(carbon.Now(tz).StdTime())),
 	)
 	if err != nil {
 		return hook, err
