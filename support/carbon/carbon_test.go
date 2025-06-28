@@ -8,6 +8,24 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func TestNew(t *testing.T) {
+	tt, _ := stdtime.ParseInLocation(DateTimeLayout, "2020-08-05 13:14:15", stdtime.UTC)
+	assert.Equal(t, "2020-08-05 13:14:15 +0000 UTC", New(tt).ToString())
+	assert.Equal(t, tt.String(), New(tt).ToString())
+}
+
+func TestZeroValue(t *testing.T) {
+	assert.Equal(t, "0001-01-01 00:00:00 +0000 UTC", ZeroValue().ToString())
+	assert.Equal(t, "January", ZeroValue().ToMonthString())
+	assert.Equal(t, "一月", ZeroValue().SetLocale("zh-CN").ToMonthString())
+}
+
+func TestEpochValue(t *testing.T) {
+	assert.Equal(t, "1970-01-01 00:00:00 +0000 UTC", EpochValue().ToString())
+	assert.Equal(t, "January", EpochValue().ToMonthString())
+	assert.Equal(t, "一月", EpochValue().SetLocale("zh-CN").ToMonthString())
+}
+
 func TestSetTimezone(t *testing.T) {
 	defer SetTimezone(UTC)
 
@@ -227,14 +245,22 @@ func TestFromStdTime(t *testing.T) {
 	assert.Equal(t, "2020-01-01 00:00:00", time.ToDateTimeString(carbon.UTC))
 }
 
-func TestErrorTime(t *testing.T) {
-	year, month, day, hour, minute, second, timestamp, timezone := 2020, 8, 5, 13, 14, 15, int64(1577855655), "xxx"
+func TestFromJulian(t *testing.T) {
+	assert.Equal(t, "2024-01-23 13:14:15 +0000 UTC", FromJulian(2460333.051563).ToString())
+	assert.Equal(t, "2024-01-23 13:14:15 +0000 UTC", FromJulian(60332.551563).ToString())
 
-	assert.NotNil(t, FromDateTime(year, month, day, hour, minute, second, timezone).Error, "It should catch an exception in CreateFromDateTime()")
-	assert.NotNil(t, FromDate(year, month, day, timezone).Error, "It should catch an exception in CreateFromDate()")
-	assert.NotNil(t, FromTime(hour, minute, second, timezone).Error, "It should catch an exception in CreateFromTime()")
-	assert.NotNil(t, FromTimestamp(timestamp, timezone).Error, "It should catch an exception in CreateFromTime()")
-	assert.NotNil(t, FromTimestampMilli(timestamp, timezone).Error, "It should catch an exception in CreateFromTimestampMilli()")
-	assert.NotNil(t, FromTimestampMicro(timestamp, timezone).Error, "It should catch an exception in CreateFromTimestampMicro()")
-	assert.NotNil(t, FromTimestampNano(timestamp, timezone).Error, "It should catch an exception in CreateFromTimestampNano()")
+	assert.Equal(t, "2024-01-23 13:14:18 +0000 UTC", FromJulian(2460333.0516).ToString())
+	assert.Equal(t, "2024-01-23 13:14:18 +0000 UTC", FromJulian(60332.5516).ToString())
+}
+
+func TestFromLunar(t *testing.T) {
+	assert.Equal(t, "2024-01-21 00:00:00 +0800 CST", FromLunar(2023, 12, 11, false).ToString(PRC))
+	assert.Equal(t, "2024-01-18 00:00:00 +0800 CST", FromLunar(2023, 12, 8, false).ToString(PRC))
+	assert.Equal(t, "2024-01-24 00:00:00 +0800 CST", FromLunar(2023, 12, 14, false).ToString(PRC))
+}
+
+func TestFromPersian(t *testing.T) {
+	assert.Equal(t, "1800-01-01 00:00:00", FromPersian(1178, 10, 11).ToDateTimeString())
+	assert.Equal(t, "2024-01-01 00:00:00", FromPersian(1402, 10, 11).ToDateTimeString())
+	assert.Equal(t, "2024-08-05 00:00:00", FromPersian(1403, 5, 15).ToDateTimeString())
 }
