@@ -1,7 +1,27 @@
 package carbon
 
-import (
-	"github.com/dromara/carbon/v2"
+import "github.com/dromara/carbon/v2"
+
+type (
+	TimestampType      int64
+	TimestampMicroType int64
+	TimestampMilliType int64
+	TimestampNanoType  int64
+
+	DateTimeType      string
+	DateTimeMicroType string
+	DateTimeMilliType string
+	DateTimeNanoType  string
+
+	DateType      string
+	DateMilliType string
+	DateMicroType string
+	DateNanoType  string
+
+	TimeType      string
+	TimeMilliType string
+	TimeMicroType string
+	TimeNanoType  string
 )
 
 type (
